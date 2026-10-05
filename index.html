@@ -4,8 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MuMusic</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Erica+One&display=swap" rel="stylesheet">
 </head>
 <body>
-    
+    <div class="Header">
+        <h1>MuMusic</h1>
+        <p>Bienvenido a MuMusic!</p>
+        
+    </div>
+
+    </div>
+
+    <div class="Música">
+        <label for ="fileInput" class="subirMusica">Selecciona tu música:</label>
+        <input type="file" id="fileInput" accept="audio/*" >
+        <div class="disco" id="disco" aria-hidden="true"></div>
+        <div class="infocancion">
+            <div class="Nombre-Canción" id="songName">Sin cancion seleccionada</div>
+            <input type="range" id="barraProgreso" min="0" max="1" step="0.01" value="1">            
+            <button id="playButton">Reproducir</button>
+        </div>
+        <audio id="audioPlayer"></audio>
+    </div>
+    <script>
+        const inputAudio = document.getElementById('fileInput');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const playButton = document.getElementById('playButton');
+        const songName = document.getElementById('songName');
+        const barraProgreso = document.getElementById('barraProgreso');
+        const disco = document.getElementById('disco');
+
+        inputAudio.addEventListener('change', function(e){
+            const file = e.target.files[0];
+            if (file){
+                audioPlayer.pause();
+                audioPlayer.src = URL.createObjectURL(file);
+                songName.textContent = file.name;
+                audioPlayer.load();
+                disco.classList.remove('girando');
+                playButton.textContent = 'Reproducir';
+                }
+            }
+        );
+
+        playButton.addEventListener('click', function(){
+            if (!audioPlayer.src) return;
+
+            if (audioPlayer.paused){
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause();
+            }
+        });
+
+        audioPlayer.addEventListener('play', () => {
+            disco.classList.add('girando');
+            playButton.textContent = 'Pausa';
+        });
+
+        audioPlayer.addEventListener('pause', () => {
+            disco.classList.remove('girando');
+            playButton.textContent = 'Reproducir';
+        });
+
+        audioPlayer.addEventListener('ended', () => {
+            disco.classList.remove('girando');
+            playButton.textContent = 'Reproducir';
+        });
+
+        audioPlayer.addEventListener('loadedmetadata', () => {
+        barraProgreso.max = audioPlayer.duration;
+        });
+
+        audioPlayer.addEventListener('timeupdate', () => {
+        barraProgreso.value = audioPlayer.currentTime;
+        });
+
+        barraProgreso.addEventListener('input', () => {
+        audioPlayer.currentTime = barraProgreso.value;
+        });
+    </script>
+
 </body>
 </html>
